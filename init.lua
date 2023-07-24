@@ -422,7 +422,7 @@ require("lazy").setup({
 	{
 		"https://github.com/jose-elias-alvarez/null-ls.nvim",
 		name = "null",
-		dependencies = "plenary",
+		dependencies = "https://github.com/nvim-lua/plenary.nvim",
 		config = function()
 			local null_ls = require('null-ls')
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
@@ -482,50 +482,30 @@ require("lazy").setup({
 		end,
 	},
 
-	{
-		"https://github.com/nvim-lua/plenary.nvim",
-		name = "plenary",
-	},
-
 	--------------------------------------------------------------------------------
 
-	-- fzf
+	-- telescope
 
 	{
-		-- fzf
-		"https://github.com/junegunn/fzf",
-		name = "fzf",
-	},
-
-	{
-		-- fzf.vim
-		--
-		-- TODO: document where config is cargo culted from.
-		"https://github.com/junegunn/fzf.vim",
-		dependencies = { "fzf" },
+		"https://github.com/nvim-telescope/telescope.nvim",
+		dependencies = "https://github.com/nvim-lua/plenary.nvim",
+		tag = "0.1.2",
 		config = function()
-			vim.cmd(
-				[[
-				" let g:fzf_colors =
-				" \ { 'fg': ['fg', 'Normal'],
-				" \ 'bg': ['bg', 'Pmenu']}
-
-				nnoremap <c-p> :GFiles<Cr>
-				nnoremap <c-F> :Files<Cr>
-				command! -bang -nargs=* GGrep
-				\ call fzf#vim#grep(
-				\ 'git grep --line-number -- '.shellescape(<q-args>), 0,
-				\ fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
-				nnoremap <c-g> :GGrep<Cr>
-				]]
-			)
+			local telescope = require('telescope').setup({})
+			local builtin = require('telescope.builtin')
+			vim.keymap.set('n', '<c-p>', builtin.find_files, {})
+			vim.keymap.set('n', '<c-g>', builtin.live_grep, {})
+			-- vim.keymap.set('n', '<c-B>', builtin.buffers, {})
+			vim.keymap.set('n', '<c-h>', builtin.help_tags, {})
+			vim.keymap.set('n', '<c-t>', builtin.lsp_dynamic_workspace_symbols, {})
 		end,
 	},
+
 })
 
 
 -- Keymaps:
-vim.keymap.set('n', '<c-q>', ':bwipeout<cr>') -- Close buffer.
+vim.keymap.set('n', '<c-w>', ':bwipeout<cr>') -- Close buffer.
 vim.keymap.set('n', '-', ':Ex $PWD<cr>') -- Poor man's vinegar (better since not relative to file).
 -- Move buffers with tab and s-tab:
 vim.keymap.set('n', '<s-tab>', ':bprevious<cr>')
